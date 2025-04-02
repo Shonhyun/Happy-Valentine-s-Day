@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transition: opacity 2s ease-in-out, transform 2s ease-in-out;
+            transform: translateY(30px);
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-in {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .image-animation {
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
+            transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .image-animation.visible {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .text-animation {
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .text-animation.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .music-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+        }
+
+        .music-btn:hover {
+            transform: scale(1.1) rotate(10deg);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .music-btn.active {
+            background: rgba(255, 0, 0, 0.8);
+        }
+
+        .typing-animation::after {
+            content: '|';
+            animation: blink 0.7s infinite;
+        }
+
+        .message-container {
+            min-height: 4em;
+            transition: all 1s ease-in-out;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes floatAnimation {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .float-animation {
+            animation: floatAnimation 3s ease-in-out infinite;
+        }
+
+        .email-icon {
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .email-icon:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .sweet-message {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            z-index: 1001;
+            max-width: 90vw;
+            width: 800px;
+            display: flex;
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .sweet-message.visible {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            pointer-events: auto;
+        }
+
+        .message-image {
+            width: 40%;
+            height: 400px;
+            object-fit: cover;
+        }
+
+        .message-content {
+            width: 60%;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .message-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .message-overlay.visible {
+            display: block;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #991b1b;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            line-height: 1;
+            transition: transform 0.2s ease;
+        }
+
+        .close-button:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-b from-pink-300 to-red-500 text-white min-h-screen">
+
+    <audio id="bg-music" loop>
+        <source src="audio/mine.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <!-- Music Button -->
+    <button id="music-btn" class="music-btn transition-transform duration-300 ease-in-out hover:scale-110">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+        </svg>
+    </button>
+    <div class="min-h-screen flex flex-col items-center justify-center text-center p-10 bg-red-600 shadow-lg fade-in"
+        id="intro">
+        <h1 class="text-6xl font-extrabold float-animation">Happy Valentine's Day, My Love! ❤️</h1>
+        <p class="text-xl mt-5 max-w-2xl font-light typing-animation" id="intro-text"></p>
+    </div>
+    <!-- Image and Message Sections -->
+    <div class="space-y-20 py-20" id="message-container">
+        <!-- Dynamic Sections will be inserted here by JavaScript -->
+    </div>
+    <div class="min-h-screen flex flex-col items-center justify-center text-center p-10 bg-red-800 text-white shadow-2xl rounded-lg fade-in"
+        id="outro">
+        <h1 class="text-5xl font-extrabold float-animation">I Love You More Than Words Can Say! ❤️</h1>
+        <p class="text-xl mt-5 max-w-xl font-light typing-animation" id="outro-text"></p>
+
+        <!-- Email Icon -->
+        <div class="mt-8 relative">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 email-icon mx-auto" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" id="email-icon">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            <p class="mt-2 text-sm text-white/80">Click the envelope for a special message ✨</p>
+
+            <!-- Message Overlay -->
+            <div class="message-overlay" id="message-overlay"></div>
+
+            <!-- Sweet Message -->
+            <div class="sweet-message" id="sweet-message">
+                <img src="img/portrait.jpg" alt="Love Portrait" class="message-image">
+                <div class="message-content">
+                    <button class="close-button" id="close-message">×</button>
+                    <h3 class="text-2xl font-bold mb-3 text-red-800">My Dearest Love ❤️</h3>
+                    <p class="text-lg leading-relaxed text-gray-700">
+                        Pasensya na, I know I’ve made mistakes, but I just want to say I’m sorry for everything I’ve
+                        done. I just hope you’ll forgive me, kahit na alam ko hindi ko deserve. I don’t even know why I
+                        do what I do.
+                        I love you always love,<br>
+                        you're the greatest thing I have in my life💝
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Authentication Modal -->
+    <div class="auth-modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden"
+        id="auth-modal">
+        <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Enter the Call Sign</h2>
+            <input type="text" id="call-sign-input" class="border border-gray-300 p-2 rounded w-full mb-4 text-black"
+                placeholder="Type the call sign here">
+            <button id="submit-call-sign"
+                class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Submit</button>
+            <p id="auth-error" class="text-red-500 mt-2 hidden">Oops, wrong!</p>
+        </div>
+    </div>
+
+    <script>
+        const audio = document.getElementById("bg-music");
+        const musicBtn = document.getElementById("music-btn");
+        const emailIcon = document.getElementById("email-icon");
+        const sweetMessage = document.getElementById("sweet-message");
+        const messageOverlay = document.getElementById("message-overlay");
+        const closeButton = document.getElementById("close-message");
+        const authModal = document.getElementById("auth-modal");
+        const callSignInput = document.getElementById("call-sign-input");
+        const submitCallSign = document.getElementById("submit-call-sign");
+        const authError = document.getElementById("auth-error");
+
+        // Function to show authentication modal
+        function showAuthModal() {
+            authModal.classList.remove("hidden");
+        }
+
+        // Function to hide authentication modal
+        function hideAuthModal() {
+            authModal.classList.add("hidden");
+        }
+
+        // Function to show message
+        function showMessage() {
+            sweetMessage.classList.add("visible");
+            messageOverlay.classList.add("visible");
+        }
+
+        // Function to hide message
+        function hideMessage() {
+            sweetMessage.classList.remove("visible");
+            messageOverlay.classList.remove("visible");
+        }
+
+        // Event listeners
+        emailIcon.addEventListener("click", showAuthModal);
+        closeButton.addEventListener("click", hideMessage);
+        messageOverlay.addEventListener("click", hideMessage);
+
+        submitCallSign.addEventListener("click", function () {
+            const callSign = callSignInput.value.trim();
+            if (callSign.toLowerCase() === "dot") {
+                hideAuthModal();
+                showMessage();
+            } else {
+                authError.classList.remove("hidden");
+            }
+        });
+
+        callSignInput.addEventListener("input", function () {
+            authError.classList.add("hidden");
+        });
+
+        musicBtn.addEventListener("click", function () {
+            if (audio.paused) {
+                audio.play();
+                musicBtn.classList.add("active");
+                musicBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>';
+            } else {
+                audio.pause();
+                musicBtn.classList.remove("active");
+                musicBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>';
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            audio.volume = 0.5;
+            setupAnimations();
+        });
+
+        function typeWriter(element, text, callback, i = 0) {
+            if (i < text.length) {
+                element.innerHTML += text.charAt(i);
+                i++;
+                setTimeout(() => typeWriter(element, text, callback, i), 50);
+            } else {
+                element.classList.remove('typing-animation');
+                if (callback) callback();
+            }
+        }
+
+        function clearText(element, callback, i = 0) {
+            const text = element.innerHTML;
+            if (i < text.length) {
+                element.innerHTML = text.slice(0, -1);
+                i++;
+                setTimeout(() => clearText(element, callback, i), 30);
+            } else {
+                if (callback) callback();
+            }
+        }
+
+        const images = [
+            "img/image1.jpg",
+            "img/image2.jpg",
+            "img/image3.jpg",
+            "img/image4.jpg",
+            "img/image5.jpg",
+            "img/image6.jpg"
+        ];
+        const messages = [
+            "Hello love sorry kung wala akong flowers for you today. Pero, I wanted to do something special pa rin. Kaya ito, gumawa na lang ako ng website just for you.",
+            "I just wanted to show you how much I care, kahit simpleng gesture lang ito.",
+            "Thank you sa walang sawang supporta mo sakin, especially through the ups and downs.",
+            "You’ll always be my girl, no matter what. You’re the greatest thing that’s ever happened to me, and I’m so thankful to have you in my life.",
+            "I hope you appreciate this little surprise I made for you. Hindi man flowers, pero sana ramdam mo how much you mean to me.",
+            "I love you always love❤️"
+        ];
+        const introText = "i hope ma-appreciate mo tong website na gawa ko.";
+        const outroText = "Thank you for being my love, my light, my forever. Happy Valentine's Day, my love.";
+
+        function setupAnimations() {
+            const container = document.getElementById('message-container');
+
+            // Setup intro and outro text
+            const introElement = document.getElementById('intro-text');
+            const outroElement = document.getElementById('outro-text');
+
+            images.forEach((img, i) => {
+                const section = document.createElement('div');
+                section.className = `flex flex-col md:flex-row${i % 2 === 0 ? '' : '-reverse'} items-center justify-center p-10 bg-white bg-opacity-20 backdrop-blur-lg rounded-lg shadow-xl fade-in transition-all duration-700 hover:bg-opacity-30`;
+
+                section.innerHTML = `
+                    <div class="image-animation">
+                        <img src="${img}" class="w-80 h-80 object-cover rounded-2xl shadow-lg border-4 border-white transition duration-500 hover:scale-105" alt="Memory ${i + 1}">
+                    </div>
+                    <div class="md:${i % 2 === 0 ? 'ml' : 'mr'}-10 text-lg max-w-md font-semibold mt-6 md:mt-0 text-animation">
+                        <div class="message-container">
+                            <p id="message-${i}" class="typing-animation"></p>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(section);
+            });
+
+            // Set up Intersection Observer
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+
+                        // Add visible class to image and text containers
+                        const imageContainer = entry.target.querySelector('.image-animation');
+                        const textContainer = entry.target.querySelector('.text-animation');
+                        if (imageContainer) imageContainer.classList.add('visible');
+                        if (textContainer) textContainer.classList.add('visible');
+
+                        if (entry.target.id === 'intro') {
+                            if (!introElement.dataset.animated) {
+                                introElement.dataset.animated = true;
+                                setTimeout(() => typeWriter(introElement, introText), 500);
+                            }
+                        } else if (entry.target.id === 'outro') {
+                            if (!outroElement.dataset.animated) {
+                                outroElement.dataset.animated = true;
+                                setTimeout(() => typeWriter(outroElement, outroText), 500);
+                            }
+                        } else {
+                            const messageElement = entry.target.querySelector('[id^="message-"]');
+                            if (messageElement && !messageElement.dataset.animated) {
+                                messageElement.dataset.animated = true;
+                                setTimeout(() => typeWriter(messageElement, messages[parseInt(messageElement.id.split('-')[1])]), 800);
+                            }
+                        }
+                    } else {
+                        entry.target.classList.remove('visible');
+
+                        // Remove visible class from image and text containers
+                        const imageContainer = entry.target.querySelector('.image-animation');
+                        const textContainer = entry.target.querySelector('.text-animation');
+                        if (imageContainer) imageContainer.classList.remove('visible');
+                        if (textContainer) textContainer.classList.remove('visible');
+
+                        if (entry.target.id === 'intro') {
+                            if (introElement.dataset.animated) {
+                                introElement.innerHTML = '';
+                                introElement.dataset.animated = false;
+                            }
+                        } else if (entry.target.id === 'outro') {
+                            if (outroElement.dataset.animated) {
+                                outroElement.innerHTML = '';
+                                outroElement.dataset.animated = false;
+                            }
+                        } else {
+                            const messageElement = entry.target.querySelector('[id^="message-"]');
+                            if (messageElement && messageElement.dataset.animated) {
+                                messageElement.innerHTML = '';
+                                messageElement.dataset.animated = false;
+                            }
+                        }
+                    }
+                });
+            }, {
+                threshold: 0.5,
+                rootMargin: '0px'
+            });
+
+            // Observe each section individually
+            document.querySelectorAll('.fade-in, #message-container > div').forEach(section => {
+                observer.observe(section);
+            });
+        }
+    </script>
+</body>
+
+</html>
+
+</html>
